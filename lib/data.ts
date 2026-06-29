@@ -16,7 +16,7 @@ export type Product = {
   description: string;
 };
 
-export const APP_NAME = "Datics.ai Rao";
+export const APP_NAME = "Lumière";
 export const APP_TAGLINE = "Premium Essentials for Modern Living";
 
 export const navLinks: NavLink[] = [
