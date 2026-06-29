@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { motion, type Variants } from "framer-motion";
+import { motion } from "framer-motion";
 import { Star, ShoppingBag, ArrowRight, Check, Truck, RefreshCw, Shield, Heart, ChevronRight, Sparkles } from 'lucide-react';
-import { APP_NAME, APP_TAGLINE, BRAND_ACCENT } from "@/lib/data";
+import { APP_NAME } from "@/lib/data";
 import {
   fadeInUp,
-  fadeIn,
   staggerContainer,
   scaleIn,
   slideInLeft,
@@ -21,11 +19,11 @@ const products = [
     id: "p1",
     name: "Merino Wool Crewneck",
     price: 128,
-    originalPrice: 160,
+    originalPrice: 160 as number | undefined,
     rating: 4.9,
     reviewCount: 214,
     image: "https://picsum.photos/seed/5481ee9847b1/800/600",
-    badge: "Sale",
+    badge: "Sale" as string | undefined,
     category: "sale",
     description: "Ultra-soft 100% merino wool. Naturally temperature-regulating for year-round wear.",
   },
@@ -33,11 +31,11 @@ const products = [
     id: "p2",
     name: "Linen Relaxed Trousers",
     price: 98,
-    originalPrice: undefined,
+    originalPrice: undefined as number | undefined,
     rating: 4.7,
     reviewCount: 138,
     image: "https://imgproxy.johnhenric.com/preset:sharp/resize:fit:1250/gravity:nowe/quality:80/aHR0cHM6Ly9qb2huaGVucmljLmNlbnRyYWNkbi5uZXQvY2xpZW50L2R5bmFtaWMvaW1hZ2VzLzMyODRfYjNiOWM2NGViOC1hMDMwMDYtMTUzLWluZmx1ZW5jZXItb3JpZ2luYWwuanBn",
-    badge: "New",
+    badge: "New" as string | undefined,
     category: "new",
     description: "Breathable stonewashed linen with a tailored-yet-relaxed silhouette.",
   },
@@ -45,11 +43,11 @@ const products = [
     id: "p3",
     name: "Leather Card Wallet",
     price: 64,
-    originalPrice: undefined,
+    originalPrice: undefined as number | undefined,
     rating: 4.8,
     reviewCount: 302,
     image: "https://picsum.photos/seed/5481ee9847b1/800/600",
-    badge: "Popular",
+    badge: "Popular" as string | undefined,
     category: "popular",
     description: "Full-grain vegetable-tanned leather. Holds 6 cards and slim-folds flat.",
   },
@@ -57,11 +55,11 @@ const products = [
     id: "p4",
     name: "Ceramic Pour-Over Set",
     price: 86,
-    originalPrice: 110,
+    originalPrice: 110 as number | undefined,
     rating: 4.9,
     reviewCount: 189,
     image: "https://m.media-amazon.com/images/I/7159+ELcEOL._AC_UF894,1000_QL80_.jpg",
-    badge: "Sale",
+    badge: "Sale" as string | undefined,
     category: "sale",
     description: "Hand-thrown stoneware dripper and carafe. Brews 600 ml in under four minutes.",
   },
@@ -69,11 +67,11 @@ const products = [
     id: "p5",
     name: "Canvas Tote Bag",
     price: 48,
-    originalPrice: undefined,
+    originalPrice: undefined as number | undefined,
     rating: 4.6,
     reviewCount: 421,
     image: "https://m.media-amazon.com/images/I/7159+ELcEOL._AC_UF894,1000_QL80_.jpg",
-    badge: undefined,
+    badge: undefined as string | undefined,
     category: "popular",
     description: "12 oz heavyweight canvas with reinforced handles. Holds up to 20 kg.",
   },
@@ -81,11 +79,11 @@ const products = [
     id: "p6",
     name: "Bamboo Desk Organizer",
     price: 72,
-    originalPrice: undefined,
+    originalPrice: undefined as number | undefined,
     rating: 4.7,
     reviewCount: 97,
     image: "https://meedenart.com/cdn/shop/files/1-07_a24e45f6-ae9b-4b15-b218-cc80ca127696_1600x.png?v=1732685200",
-    badge: "New",
+    badge: "New" as string | undefined,
     category: "new",
     description: "Sustainably sourced bamboo with five compartments and a hidden cable channel.",
   },
@@ -171,25 +169,33 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
   return (
     <div className="flex items-center gap-1.5">
       <div className="flex items-center gap-0.5">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <Star
-            key={i}
-            className={`w-3.5 h-3.5 ${
-              i <= Math.round(rating)
-                ? "fill-[#e63946] text-[#e63946]"
-                : "fill-transparent text-[#d1d5db]"
-            }`}
-            strokeWidth={1.5}
-          />
-        ))}
+        {[1, 2, 3, 4, 5].map((i) => {
+          const filled = i <= Math.round(rating);
+          return (
+            <Star
+              key={i}
+              className={filled ? "w-3.5 h-3.5 fill-[#e63946] text-[#e63946]" : "w-3.5 h-3.5 fill-transparent text-[#d1d5db]"}
+              strokeWidth={1.5}
+            />
+          );
+        })}
       </div>
       <span className="text-xs text-[#777777]">({count})</span>
     </div>
   );
 }
 
-function ProductCard({ product, index }: { product: typeof products[0]; index: number }) {
+type Product = typeof products[0];
+
+function ProductCard({ product }: { product: Product; index: number }) {
   const [wished, setWished] = useState(false);
+
+  const badgeClass =
+    product.badge === "Sale"
+      ? "absolute top-3 left-3 text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#e63946] text-white"
+      : product.badge === "New"
+      ? "absolute top-3 left-3 text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#111111] text-white"
+      : "absolute top-3 left-3 text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full bg-white text-[#111111] border border-black/10";
 
   return (
     <motion.div
@@ -198,7 +204,6 @@ function ProductCard({ product, index }: { product: typeof products[0]; index: n
       transition={{ duration: 0.25, ease: "easeOut" }}
       className="group relative bg-white rounded-2xl overflow-hidden border border-black/5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_-8px_rgba(0,0,0,0.10)] flex flex-col"
     >
-      {/* Image */}
       <div className="relative overflow-hidden aspect-[4/3] bg-[#f5f4f2]">
         <img
           src={product.image}
@@ -206,15 +211,7 @@ function ProductCard({ product, index }: { product: typeof products[0]; index: n
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         {product.badge && (
-          <span
-            className={`absolute top-3 left-3 text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full ${
-              product.badge === "Sale"
-                ? "bg-[#e63946] text-white"
-                : product.badge === "New"
-                ? "bg-[#111111] text-white"
-                : "bg-white text-[#111111] border border-black/10"
-            }`}
-          >
+          <span className={badgeClass}>
             {product.badge}
           </span>
         )}
@@ -226,15 +223,12 @@ function ProductCard({ product, index }: { product: typeof products[0]; index: n
           className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm border border-black/5 transition-colors duration-200"
         >
           <Heart
-            className={`w-4 h-4 transition-colors duration-200 ${
-              wished ? "fill-[#e63946] text-[#e63946]" : "text-[#555555]"
-            }`}
+            className={wished ? "w-4 h-4 fill-[#e63946] text-[#e63946]" : "w-4 h-4 text-[#555555]"}
             strokeWidth={1.75}
           />
         </motion.button>
       </div>
 
-      {/* Content */}
       <div className="flex flex-col flex-1 p-4 gap-2">
         <StarRating rating={product.rating} count={product.reviewCount} />
         <h3 className="font-semibold text-[#111111] text-sm leading-snug tracking-tight">
@@ -246,11 +240,11 @@ function ProductCard({ product, index }: { product: typeof products[0]; index: n
         <div className="flex items-center justify-between mt-3 pt-3 border-t border-black/5">
           <div className="flex items-baseline gap-1.5">
             <span className="text-base font-bold text-[#111111]">
-              ${product.price}
+              {"$"}{product.price}
             </span>
             {product.originalPrice != null && (
               <span className="text-xs text-[#aaaaaa] line-through">
-                ${product.originalPrice}
+                {"$"}{product.originalPrice}
               </span>
             )}
           </div>
@@ -296,9 +290,8 @@ export default function HomePage() {
 
   return (
     <main className="bg-[#fafaf8] overflow-x-hidden">
-      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      {/* Hero */}
       <section className="relative min-h-[92vh] flex items-center pt-16">
-        {/* Background texture */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -338,7 +331,9 @@ export default function HomePage() {
                 variants={fadeInUp}
                 className="text-lg text-[#666666] leading-relaxed max-w-md text-pretty"
               >
-                {APP_TAGLINE}. Each piece is designed to last, sourced responsibly, and priced fairly.
+                Premium Essentials for Modern Living. Each piece is designed to last, sourced responsibly, and priced fairly.
+                <br />
+                <span className="text-sm text-[#999999] mt-1 block">Rao Ali</span>
               </motion.p>
 
               <motion.div variants={fadeInUp} className="flex flex-wrap gap-3 pt-2">
@@ -369,7 +364,6 @@ export default function HomePage() {
                 </motion.a>
               </motion.div>
 
-              {/* Trust badges */}
               <motion.div
                 variants={fadeInUp}
                 className="flex flex-wrap items-center gap-4 pt-4 border-t border-black/8"
@@ -423,7 +417,6 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Floating stat card */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.85, y: 16 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -443,7 +436,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Value Props ──────────────────────────────────────────────────── */}
+      {/* Value Props */}
       <section className="bg-[#111111] py-14 md:py-16">
         <motion.div
           variants={staggerContainer}
@@ -468,10 +461,9 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* ── Products ─────────────────────────────────────────────────────── */}
+      {/* Products */}
       <section id="products" className="py-24 md:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
           <motion.div
             variants={staggerContainer}
             initial="hidden"
@@ -496,22 +488,18 @@ export default function HomePage() {
               </motion.h2>
             </div>
 
-            {/* Filters */}
-            <motion.div
-              variants={fadeInUp}
-              className="flex flex-wrap gap-2"
-            >
+            <motion.div variants={fadeInUp} className="flex flex-wrap gap-2">
               {filters.map((f) => (
                 <motion.button
                   key={f.value}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => setActiveFilter(f.value)}
-                  className={`text-xs font-semibold px-4 py-2 rounded-full border transition-all duration-200 ${
+                  className={
                     activeFilter === f.value
-                      ? "bg-[#111111] text-white border-[#111111]"
-                      : "bg-white text-[#555555] border-black/10 hover:border-black/20"
-                  }`}
+                      ? "text-xs font-semibold px-4 py-2 rounded-full border transition-all duration-200 bg-[#111111] text-white border-[#111111]"
+                      : "text-xs font-semibold px-4 py-2 rounded-full border transition-all duration-200 bg-white text-[#555555] border-black/10 hover:border-black/20"
+                  }
                 >
                   {f.label}
                 </motion.button>
@@ -519,7 +507,6 @@ export default function HomePage() {
             </motion.div>
           </motion.div>
 
-          {/* Grid */}
           <motion.div
             key={activeFilter}
             variants={staggerContainer}
@@ -551,7 +538,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Collections ──────────────────────────────────────────────────── */}
+      {/* Collections */}
       <section id="collections" className="py-24 md:py-32 bg-[#f5f4f2]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -588,9 +575,7 @@ export default function HomePage() {
                 variants={scaleIn}
                 whileHover={{ y: -6 }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
-                className={`group relative overflow-hidden rounded-2xl cursor-pointer shadow-[0_4px_24px_rgba(0,0,0,0.10)] ${
-                  i === 0 ? "md:row-span-1" : ""
-                }`}
+                className={i === 0 ? "group relative overflow-hidden rounded-2xl cursor-pointer shadow-[0_4px_24px_rgba(0,0,0,0.10)]" : "group relative overflow-hidden rounded-2xl cursor-pointer shadow-[0_4px_24px_rgba(0,0,0,0.10)]"}
                 style={{ aspectRatio: i === 1 ? "4/5" : "4/3" }}
               >
                 <img
@@ -605,13 +590,9 @@ export default function HomePage() {
                   </span>
                   <h3 className="text-xl font-bold text-white tracking-tight">{col.title}</h3>
                   <p className="text-sm text-white/70 leading-snug">{col.subtitle}</p>
-                  <motion.span
-                    initial={{ x: 0 }}
-                    whileHover={{ x: 4 }}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-[#e63946] mt-2"
-                  >
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#e63946] mt-2">
                     Explore <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} />
-                  </motion.span>
+                  </span>
                 </div>
               </motion.div>
             ))}
@@ -619,11 +600,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── About / Brand Story ──────────────────────────────────────────── */}
+      {/* About */}
       <section id="about" className="py-24 md:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Image side */}
             <motion.div
               variants={slideInLeft}
               initial="hidden"
@@ -634,11 +614,10 @@ export default function HomePage() {
               <div className="rounded-2xl overflow-hidden aspect-[4/5] shadow-[0_8px_40px_rgba(0,0,0,0.12)]">
                 <img
                   src="https://vangogh.atelier-lumieres.com/_astro/experience11_avcmj6_iuR3D.webp"
-                  alt="Lumière atelier"
+                  alt="Lumiere atelier"
                   className="w-full h-full object-cover"
                 />
               </div>
-              {/* Accent card */}
               <motion.div
                 initial={{ opacity: 0, x: 24, y: 24 }}
                 whileInView={{ opacity: 1, x: 0, y: 0 }}
@@ -651,7 +630,6 @@ export default function HomePage() {
               </motion.div>
             </motion.div>
 
-            {/* Copy side */}
             <motion.div
               variants={staggerContainer}
               initial="hidden"
@@ -720,7 +698,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Testimonials ─────────────────────────────────────────────────── */}
+      {/* Testimonials */}
       <section className="py-24 md:py-32 bg-[#111111]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -790,11 +768,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Newsletter / Contact ─────────────────────────────────────────── */}
+      {/* Newsletter */}
       <section id="contact" className="py-24 md:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative bg-[#111111] rounded-3xl overflow-hidden px-8 py-16 md:px-16 md:py-20">
-            {/* Background glow */}
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
@@ -804,7 +781,6 @@ export default function HomePage() {
             />
 
             <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              {/* Copy */}
               <motion.div
                 variants={staggerContainer}
                 initial="hidden"
@@ -844,7 +820,6 @@ export default function HomePage() {
                 </motion.ul>
               </motion.div>
 
-              {/* Form */}
               <motion.div
                 variants={slideInRight}
                 initial="hidden"
