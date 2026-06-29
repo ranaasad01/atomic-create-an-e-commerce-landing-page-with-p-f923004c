@@ -332,6 +332,7 @@ export default function HomePage() {
                 className="text-lg text-[#666666] leading-relaxed max-w-md text-pretty"
               >
                 Premium Essentials for Modern Living. Each piece is designed to last, sourced responsibly, and priced fairly.
+Rao Ali
                 <br />
                 <span className="text-sm text-[#999999] mt-1 block">Rao Ali</span>
               </motion.p>
